@@ -65,7 +65,7 @@ const EventDetail = () => {
       toast.success("Booking confirmed successfully!");
       
       // Navigate to success page with booking details in state
-      navigate("/booking-success", {
+      navigate("/booking/success", {
         state: {
           eventName: data?.event?.name,
           venue: data?.event?.venue,

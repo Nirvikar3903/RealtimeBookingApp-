@@ -2,6 +2,7 @@ import { createSlice } from "@reduxjs/toolkit";
 
 const initialState = {
   selectedSeats: [],
+  step: 1,
   reservation: null,
 };
 
@@ -17,18 +18,21 @@ const bookingSlice = createSlice({
         state.selectedSeats.push(seatNumber);
       }
     },
-    clearSelection: (state) => {
+    clearSelectedSeats: (state) => {
       state.selectedSeats = [];
     },
     setReservation: (state, action) => {
       state.reservation = action.payload;
+      state.step = 2;
     },
     clearReservation: (state) => {
       state.reservation = null;
+      state.step = 1;
       state.selectedSeats = [];
     },
   },
 });
 
-export const { toggleSeat, clearSelection, setReservation, clearReservation } = bookingSlice.actions;
+export const { toggleSeat, clearSelectedSeats, setReservation, clearReservation } = bookingSlice.actions;
 export default bookingSlice.reducer;
+

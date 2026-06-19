@@ -1,7 +1,7 @@
 import { useDispatch, useSelector } from "react-redux";
 import {
   toggleSeat,
-  clearSelection,
+  clearSelectedSeats,
   setReservation,
   clearReservation,
 } from "../store/slices/bookingSlice.js";
@@ -12,7 +12,7 @@ import {
 
 export const useBooking = () => {
   const dispatch = useDispatch();
-  const { selectedSeats, reservation } = useSelector((state) => state.booking);
+  const { selectedSeats, step, reservation } = useSelector((state) => state.booking);
 
   const [reserveApi, { isLoading: isReserving, error: reserveError }] =
     useReserveSeatsMutation();
@@ -24,7 +24,7 @@ export const useBooking = () => {
   };
 
   const handleClearSelection = () => {
-    dispatch(clearSelection());
+    dispatch(clearSelectedSeats());
   };
 
   const handleReserveSeats = async (eventId) => {
@@ -50,6 +50,7 @@ export const useBooking = () => {
 
   return {
     selectedSeats,
+    step,
     reservation,
     isReserving,
     isConfirming,
@@ -64,3 +65,4 @@ export const useBooking = () => {
 };
 
 export default useBooking;
+

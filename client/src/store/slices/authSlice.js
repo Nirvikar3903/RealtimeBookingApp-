@@ -1,24 +1,21 @@
 import { createSlice } from "@reduxjs/toolkit";
 
 const getInitialState = () => {
+  const token = localStorage.getItem("sms_token") || null;
+  let user = null;
   try {
-    const user = JSON.parse(localStorage.getItem("user"));
-    const token = localStorage.getItem("token");
-    if (user && token) {
-      return {
-        user,
-        token,
-        isAuthenticated: true,
-      };
+    const storedUser = localStorage.getItem("sms_user");
+    if (storedUser) {
+      user = JSON.parse(storedUser);
     }
   } catch (e) {
     console.error("Failed to parse initial auth state:", e);
   }
 
   return {
-    user: null,
-    token: null,
-    isAuthenticated: false,
+    user,
+    token,
+    isAuthenticated: !!token,
   };
 };
 
@@ -31,18 +28,20 @@ const authSlice = createSlice({
       state.user = user;
       state.token = token;
       state.isAuthenticated = true;
-      localStorage.setItem("user", JSON.stringify(user));
-      localStorage.setItem("token", token);
+      localStorage.setItem("sms_token", token);
+      localStorage.setItem("sms_user", JSON.stringify(user));
     },
-    logOut: (state) => {
+    logout: (state) => {
       state.user = null;
       state.token = null;
       state.isAuthenticated = false;
-      localStorage.removeItem("user");
-      localStorage.removeItem("token");
+      localStorage.removeItem("sms_token");
+      localStorage.removeItem("sms_user");
     },
   },
 });
 
-export const { setCredentials, logOut } = authSlice.actions;
+export const { setCredentials, logout } = authSlice.actions;
 export default authSlice.reducer;
+
+

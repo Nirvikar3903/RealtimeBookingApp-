@@ -1,78 +1,61 @@
-import { createApi, fetchBaseQuery } from "@reduxjs/toolkit/query/react";
+import { createApi } from "@reduxjs/toolkit/query/react";
+import axiosInstance from "../../utils/axiosInstance.js";
+
+const axiosBaseQuery = () => async ({ url, method, body }) => {
+  try {
+    const result = await axiosInstance({
+      url,
+      method,
+      data: body,
+    });
+    return { data: result.data };
+  } catch (err) {
+    return { error: err.response?.data || { message: err.message } };
+  }
+};
 
 export const eventApi = createApi({
   reducerPath: "eventApi",
-  baseQuery: fetchBaseQuery({
-    baseUrl: "/api",
-    prepareHeaders: (headers, { getState }) => {
-      // Access token from localStorage or Redux state
-      const token = localStorage.getItem("token") || getState().auth?.token;
-      if (token) {
-        headers.set("Authorization", `Bearer ${token}`);
-      }
-      return headers;
-    },
-  }),
-  tagTypes: ["Events", "Event"],
+  baseQuery: axiosBaseQuery(),
+  tagTypes: ["Events", "Seats"],
   endpoints: (builder) => ({
-    // Auth endpoints
-    login: builder.mutation({
-      query: (credentials) => ({
-        url: "/auth/login",
-        method: "POST",
-        body: credentials,
-      }),
-    }),
-    register: builder.mutation({
-      query: (userData) => ({
-        url: "/auth/register",
-        method: "POST",
-        body: userData,
-      }),
-    }),
-
-    // Event endpoints
     getEvents: builder.query({
-      query: () => "/events",
+      query: () => ({
+        url: "/api/events",
+        method: "GET",
+      }),
       providesTags: ["Events"],
     }),
     getEventById: builder.query({
-      query: (id) => `/events/${id}`,
-      providesTags: (result, error, id) => [{ type: "Event", id }],
+      query: (id) => ({
+        url: `/api/events/${id}`,
+        method: "GET",
+      }),
+      providesTags: ["Seats"],
     }),
-
-    // Reservation & Booking endpoints
     reserveSeats: builder.mutation({
       query: ({ eventId, seatNumbers }) => ({
-        url: "/reserve",
+        url: "/api/reserve",
         method: "POST",
         body: { eventId, seatNumbers },
       }),
-      invalidatesTags: (result, error, { eventId }) => [
-        { type: "Event", id: eventId },
-        "Events",
-      ],
+      invalidatesTags: ["Seats"],
     }),
     confirmBooking: builder.mutation({
       query: ({ reservationId }) => ({
-        url: "/bookings",
+        url: "/api/bookings",
         method: "POST",
         body: { reservationId },
       }),
-      // We can pass eventId to invalidate or invalidate generally
-      invalidatesTags: (result, error, { eventId }) => [
-        { type: "Event", id: eventId },
-        "Events",
-      ],
+      invalidatesTags: ["Seats", "Events"],
     }),
   }),
 });
 
 export const {
-  useLoginMutation,
-  useRegisterMutation,
   useGetEventsQuery,
   useGetEventByIdQuery,
   useReserveSeatsMutation,
   useConfirmBookingMutation,
 } = eventApi;
+
