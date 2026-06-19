@@ -1,7 +1,10 @@
 import React from "react";
 import SeatButton from "./SeatButton.jsx";
+import { useBooking } from "../hooks/useBooking.js";
 
-const SeatGrid = ({ seats, selectedSeats, onSeatClick }) => {
+const SeatGrid = ({ seats, disabled }) => {
+  const { selectedSeats } = useBooking();
+
   // Group seats by their row letter (e.g. 'A' from 'A1')
   const rows = {};
   
@@ -24,15 +27,9 @@ const SeatGrid = ({ seats, selectedSeats, onSeatClick }) => {
   });
 
   return (
-    <div className="flex flex-col items-center gap-8 my-8 w-full max-w-4xl mx-auto p-6 bg-white/5 border border-white/10 backdrop-blur-md rounded-2xl">
-      {/* Screen Indicator */}
-      <div className="w-full max-w-lg mb-6 text-center">
-        <div className="h-2 w-full bg-gradient-to-r from-transparent via-cyan-500 to-transparent rounded-full shadow-[0_4px_12px_rgba(6,182,212,0.6)]" />
-        <span className="text-xs font-semibold tracking-wider text-slate-500 uppercase mt-2 block">Stage / Screen</span>
-      </div>
-
-      {/* Rows of seats */}
-      <div className="flex flex-col gap-4 w-full items-center overflow-x-auto pb-4">
+    <div className="flex flex-col items-center gap-4 my-8 w-full overflow-x-auto pb-4">
+      {/* Rows of seats with 16px gap (gap-4) */}
+      <div className="flex flex-col gap-4 min-w-[max-content] px-4">
         {sortedRowKeys.map((rowKey) => (
           <div key={rowKey} className="flex items-center gap-4">
             {/* Row Identifier */}
@@ -43,10 +40,8 @@ const SeatGrid = ({ seats, selectedSeats, onSeatClick }) => {
               {rows[rowKey].map((seat) => (
                 <SeatButton
                   key={seat._id}
-                  seatNumber={seat.seatNumber}
-                  status={seat.status}
-                  isSelected={selectedSeats.includes(seat.seatNumber)}
-                  onClick={() => onSeatClick(seat.seatNumber)}
+                  seat={seat}
+                  disabled={disabled}
                 />
               ))}
             </div>

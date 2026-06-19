@@ -1,74 +1,87 @@
 import React, { useEffect, useState } from "react";
 import { Progress } from "./ui/progress.jsx";
-import { getRemainingTime } from "../utils/dateUtils.js";
+import { cn } from "../lib/utils.js";
 import { Clock } from "lucide-react";
-import { cn } from "@/lib/utils";
 
-const Timer = ({ expiresAt, onTimeout }) => {
-  const totalDuration = 10 * 60 * 1000; // 10 minutes limit
-  const [msRemaining, setMsRemaining] = useState(() => getRemainingTime(expiresAt));
+const Timer = ({ expiresAt, onExpire }) => {
+  const getInitialSeconds = () => {
+    const remainingMs = new Date(expiresAt) - Date.now();
+    return Math.max(0, Math.floor(remainingMs / 1000));
+  };
+
+  const [secondsLeft, setSecondsLeft] = useState(getInitialSeconds);
 
   useEffect(() => {
-    setMsRemaining(getRemainingTime(expiresAt));
+    // Reset timer state when expiresAt changes
+    setSecondsLeft(getInitialSeconds());
 
     const interval = setInterval(() => {
-      const remaining = getRemainingTime(expiresAt);
-      setMsRemaining(remaining);
-
-      if (remaining <= 0) {
-        clearInterval(interval);
-        if (onTimeout) {
-          onTimeout();
+      setSecondsLeft((prev) => {
+        if (prev <= 1) {
+          clearInterval(interval);
+          if (onExpire) {
+            onExpire();
+          }
+          return 0;
         }
-      }
+        return prev - 1;
+      });
     }, 1000);
 
     return () => clearInterval(interval);
-  }, [expiresAt, onTimeout]);
+  }, [expiresAt, onExpire]);
 
-  const minutes = Math.floor(msRemaining / 60000);
-  const seconds = Math.floor((msRemaining % 60000) / 1000);
-  const secondsFormatted = seconds < 10 ? `0${seconds}` : seconds;
+  const minutes = Math.floor(secondsLeft / 60);
+  const seconds = secondsLeft % 60;
+  
+  const displayTime = `${String(minutes).padStart(2, "0")}:${String(seconds).padStart(2, "0")}`;
+  const pctRemaining = (secondsLeft / 600) * 100;
 
-  // Calculate percentage remaining for the progress bar
-  const pctRemaining = Math.max(0, Math.min(100, (msRemaining / totalDuration) * 100));
+  const isSafe = secondsLeft > 300;
+  const isWarning = secondsLeft >= 150 && secondsLeft <= 300;
+  const isDanger = secondsLeft < 150;
 
-  // Visual warning threshold colors (amber under 3 mins, red under 1 min)
-  const isUrgent = msRemaining < 60 * 1000;
-  const isWarning = msRemaining < 3 * 60 * 1000;
+  // Set color variables matching index.css variables
+  const colorClass = cn(
+    isSafe && "text-[var(--timer-safe)]",
+    isWarning && "text-[var(--timer-warning)]",
+    isDanger && "text-[var(--timer-danger)] animate-pulse"
+  );
+
+  const progressColorClass = cn(
+    isSafe && "[&>div]:bg-[var(--timer-safe)]",
+    isWarning && "[&>div]:bg-[var(--timer-warning)]",
+    isDanger && "[&>div]:bg-[var(--timer-danger)]"
+  );
 
   return (
-    <div className="w-full max-w-xl mx-auto p-5 bg-white/5 border border-white/10 backdrop-blur-md rounded-2xl flex flex-col gap-3 my-6 animate-pulse">
+    <div
+      className={cn(
+        "w-full max-w-xl mx-auto p-6 bg-white/5 border border-white/10 backdrop-blur-md rounded-2xl flex flex-col gap-4 text-center shadow-xl",
+        isDanger && "animate-timer-pulse"
+      )}
+    >
       <div className="flex items-center justify-between">
         <div className="flex items-center gap-2 text-slate-400">
           <Clock className="w-4 h-4" />
-          <span className="text-sm font-medium">Temporary Seat Hold</span>
+          <span className="text-sm font-semibold uppercase tracking-wider">Holding Seats</span>
         </div>
-        <span
-          className={cn(
-            "text-lg font-black tracking-wider",
-            isUrgent && "text-red-500",
-            !isUrgent && isWarning && "text-amber-500",
-            !isWarning && "text-cyan-400"
-          )}
-        >
-          {minutes}:{secondsFormatted}
+        <span className={cn("text-3xl font-black tracking-wider font-mono", colorClass)}>
+          {displayTime}
         </span>
       </div>
 
-      <Progress
-        value={pctRemaining}
-        className={cn(
-          "h-1.5 [&>div]:transition-all [&>div]:duration-1000",
-          isUrgent && "[&>div]:bg-red-500",
-          !isUrgent && isWarning && "[&>div]:bg-amber-500",
-          !isWarning && "[&>div]:bg-cyan-500"
-        )}
-      />
+      <Progress value={pctRemaining} className={cn("h-2", progressColorClass)} />
 
-      <span className="text-xs text-slate-500 text-center font-medium">
-        Complete your booking before this timer runs out, or your seats will be released.
-      </span>
+      {isDanger && (
+        <p className="text-xs font-bold text-[var(--timer-danger)] animate-pulse flex items-center justify-center gap-1">
+          ⚠️ Hurry! Your reservation expires soon
+        </p>
+      )}
+
+      <p className="text-xs text-slate-500 font-medium">
+        Complete your booking before the timer runs out or your seats will be released.
+      </p>
     </div>
   );
 };

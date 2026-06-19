@@ -18,6 +18,10 @@ const eventSchema = new mongoose.Schema(
       type: Number,
       required: true,
     },
+    logoUrl: {
+      type: String,
+      required: false,
+    },
   },
   {
     timestamps: true,

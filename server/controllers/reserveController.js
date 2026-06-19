@@ -1,5 +1,6 @@
 import Seat from "../models/Seat.js";
 import Reservation from "../models/Reservation.js";
+import { cleanupExpiredReservations } from "../utils/reservationCleanup.js";
 
 export const reserveSeats = async (req, res, next) => {
   try {
@@ -10,6 +11,9 @@ export const reserveSeats = async (req, res, next) => {
     if (!eventId || !seatNumbers || !Array.isArray(seatNumbers) || seatNumbers.length === 0) {
       return res.status(400).json({ message: "Event ID and seat numbers are required" });
     }
+
+    // Clean up any expired reservations first before making new holds
+    await cleanupExpiredReservations(eventId);
 
     if (!userId) {
       return res.status(401).json({ message: "Unauthorized: User not identified" });

@@ -20,7 +20,12 @@ export const useAuth = () => {
       const result = response.data;
       dispatch(
         setCredentials({
-          user: { name: result.name, email: result.email },
+          user: {
+            name: result.name,
+            email: result.email,
+            birthdate: result.birthdate,
+            phone: result.phone,
+          },
           token: result.token,
         })
       );

@@ -17,8 +17,14 @@ const loginSchema = z.object({
 });
 
 const Login = () => {
-  const { login, isLoggingIn } = useAuth();
+  const { login, isLoggingIn, isAuthenticated } = useAuth();
   const navigate = useNavigate();
+
+  React.useEffect(() => {
+    if (isAuthenticated) {
+      navigate("/events", { replace: true });
+    }
+  }, [isAuthenticated, navigate]);
 
   const {
     register,
@@ -36,7 +42,7 @@ const Login = () => {
     try {
       await login(data.email, data.password);
       toast.success("Welcome back!");
-      navigate("/events");
+      navigate("/events", { replace: true });
     } catch (err) {
       console.error(err);
       toast.error(err.message || "Invalid email or password");
@@ -100,7 +106,7 @@ const Login = () => {
               </div>
             </CardContent>
 
-            <CardFooter className="p-0 mt-6 flex flex-col gap-4">
+            <div className="mt-6 flex flex-col gap-4">
               <Button
                 type="submit"
                 disabled={isLoggingIn}
@@ -122,7 +128,10 @@ const Login = () => {
                   Sign Up
                 </Link>
               </p>
-            </CardFooter>
+              <Link to="/" className="text-xs text-slate-500 hover:text-purple-400 transition-colors font-medium">
+                ← Back to Home
+              </Link>
+            </div>
           </form>
         </Card>
       </div>

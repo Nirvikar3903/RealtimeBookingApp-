@@ -57,7 +57,7 @@ export const useBooking = () => {
     reserveError,
     confirmError,
     toggleSeat: handleToggleSeat,
-    clearSelection: handleClearSelection,
+    clearSelectedSeats: handleClearSelection,
     reserveSeats: handleReserveSeats,
     confirmBooking: handleConfirmBooking,
     clearReservation: handleClearReservation,

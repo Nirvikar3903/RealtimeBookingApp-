@@ -64,11 +64,70 @@ export const login = async (req, res, next) => {
       { expiresIn: "7d" }
     );
 
-    // Return token + name + email
+    // Return token + user details
     return res.status(200).json({
       token,
       name: user.name,
       email: user.email,
+      birthdate: user.birthdate,
+      phone: user.phone,
+    });
+  } catch (error) {
+    next(error);
+  }
+};
+
+// Update user profile
+export const updateProfile = async (req, res, next) => {
+  try {
+    const { name, email, password, birthdate, phone } = req.body;
+    const userId = req.user?.userId;
+
+    if (!userId) {
+      return res.status(401).json({ message: "Unauthorized: User session not found" });
+    }
+
+    const user = await User.findById(userId);
+    if (!user) {
+      return res.status(404).json({ message: "User not found" });
+    }
+
+    if (email && email !== user.email) {
+      // Check if email already in use
+      const existingUser = await User.findOne({ email });
+      if (existingUser) {
+        return res.status(409).json({ message: "Email is already taken" });
+      }
+      user.email = email;
+    }
+
+    if (name) {
+      user.name = name;
+    }
+
+    if (birthdate !== undefined) {
+      user.birthdate = birthdate ? new Date(birthdate) : null;
+    }
+
+    if (phone !== undefined) {
+      user.phone = phone;
+    }
+
+    if (password) {
+      const salt = await bcrypt.genSalt(10);
+      user.password = await bcrypt.hash(password, salt);
+    }
+
+    await user.save();
+
+    return res.status(200).json({
+      message: "Profile updated successfully",
+      user: {
+        name: user.name,
+        email: user.email,
+        birthdate: user.birthdate,
+        phone: user.phone,
+      },
     });
   } catch (error) {
     next(error);

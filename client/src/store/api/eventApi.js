@@ -17,7 +17,7 @@ const axiosBaseQuery = () => async ({ url, method, body }) => {
 export const eventApi = createApi({
   reducerPath: "eventApi",
   baseQuery: axiosBaseQuery(),
-  tagTypes: ["Events", "Seats"],
+  tagTypes: ["Events", "Seats", "Bookings"],
   endpoints: (builder) => ({
     getEvents: builder.query({
       query: () => ({
@@ -47,7 +47,21 @@ export const eventApi = createApi({
         method: "POST",
         body: { reservationId },
       }),
-      invalidatesTags: ["Seats", "Events"],
+      invalidatesTags: ["Seats", "Events", "Bookings"],
+    }),
+    updateProfile: builder.mutation({
+      query: (profileData) => ({
+        url: "/api/auth/profile",
+        method: "PUT",
+        body: profileData,
+      }),
+    }),
+    getMyBookings: builder.query({
+      query: () => ({
+        url: "/api/bookings/my-bookings",
+        method: "GET",
+      }),
+      providesTags: ["Bookings"],
     }),
   }),
 });
@@ -57,5 +71,7 @@ export const {
   useGetEventByIdQuery,
   useReserveSeatsMutation,
   useConfirmBookingMutation,
+  useUpdateProfileMutation,
+  useGetMyBookingsQuery,
 } = eventApi;
 

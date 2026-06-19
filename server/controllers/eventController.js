@@ -1,5 +1,6 @@
 import Event from "../models/Event.js";
 import Seat from "../models/Seat.js";
+import { cleanupExpiredReservations } from "../utils/reservationCleanup.js";
 
 // Fetch all events
 export const getAllEvents = async (req, res, next) => {
@@ -20,6 +21,9 @@ export const getEventById = async (req, res, next) => {
     if (!event) {
       return res.status(404).json({ message: "Event not found" });
     }
+
+    // Clean up any expired reservations first before returning seats
+    await cleanupExpiredReservations(id);
 
     // Fetch all seats for this event
     const seats = await Seat.find({ eventId: id });

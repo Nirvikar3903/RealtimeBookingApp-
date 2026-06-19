@@ -18,8 +18,14 @@ const registerSchema = z.object({
 });
 
 const Register = () => {
-  const { register: registerUser, isRegistering } = useAuth();
+  const { register: registerUser, isRegistering, isAuthenticated } = useAuth();
   const navigate = useNavigate();
+
+  React.useEffect(() => {
+    if (isAuthenticated) {
+      navigate("/events", { replace: true });
+    }
+  }, [isAuthenticated, navigate]);
 
   const {
     register,
@@ -38,7 +44,7 @@ const Register = () => {
     try {
       await registerUser(data.name, data.email, data.password);
       toast.success("Account created! Please login.");
-      navigate("/auth/login");
+      navigate("/auth/login", { replace: true });
     } catch (err) {
       console.error(err);
       toast.error(err.message || "Registration failed. Try again.");
@@ -121,7 +127,7 @@ const Register = () => {
               </div>
             </CardContent>
 
-            <CardFooter className="p-0 mt-6 flex flex-col gap-4">
+            <div className="mt-6 flex flex-col gap-4">
               <Button
                 type="submit"
                 disabled={isRegistering}
@@ -143,7 +149,7 @@ const Register = () => {
                   Sign In
                 </Link>
               </p>
-            </CardFooter>
+            </div>
           </form>
         </Card>
       </div>
