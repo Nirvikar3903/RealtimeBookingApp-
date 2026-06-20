@@ -21,6 +21,7 @@ function AnimatedRoutes() {
     <AnimatePresence mode="wait">
       <Routes location={location} key={location.pathname}>
         <Route path="/" element={<LandingPage />} />
+        <Route path="/events" element={<Events />} />
         <Route path="/auth/login" element={<Login />} />
         <Route path="/auth/register" element={<Register />} />
         
@@ -31,7 +32,6 @@ function AnimatedRoutes() {
 
         {/* Protected Routes */}
         <Route element={<ProtectedRoute />}>
-          <Route path="/events" element={<Events />} />
           <Route path="/events/:id" element={<EventDetail />} />
           <Route path="/booking/success" element={<BookingSuccess />} />
           <Route path="/profile" element={<Profile />} />
@@ -56,8 +56,8 @@ function AppLayout() {
         </>
       )}
 
-      {/* Global Navigation Bar — hidden on landing page (it has its own) */}
-      {!isLandingPage && <Navbar />}
+      {/* Global Navigation Bar */}
+      <Navbar />
 
       {/* Main Content Area */}
       <main className={isLandingPage ? "" : "flex-grow"}>

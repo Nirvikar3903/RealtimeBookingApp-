@@ -62,3 +62,41 @@ export const reserveSeats = async (req, res, next) => {
     next(error);
   }
 };
+
+export const cancelReservation = async (req, res, next) => {
+  try {
+    const { eventId } = req.body;
+    const userId = req.user?.userId;
+
+    if (!eventId) {
+      return res.status(400).json({ message: "Event ID is required" });
+    }
+
+    if (!userId) {
+      return res.status(401).json({ message: "Unauthorized: User not identified" });
+    }
+
+    // Find the active reservation for the user and event
+    const reservation = await Reservation.findOne({ eventId, userId });
+    if (!reservation) {
+      return res.status(404).json({ message: "No active reservation found to cancel" });
+    }
+
+    // Revert the seats to available
+    await Seat.updateMany(
+      {
+        eventId: eventId,
+        seatNumber: { $in: reservation.seatNumbers },
+        status: "reserved",
+      },
+      { $set: { status: "available" } }
+    );
+
+    // Delete the reservation record
+    await Reservation.deleteOne({ _id: reservation._id });
+
+    return res.status(200).json({ message: "Reservation cancelled successfully" });
+  } catch (error) {
+    next(error);
+  }
+};

@@ -3,7 +3,7 @@ import { Progress } from "./ui/progress.jsx";
 import { cn } from "../lib/utils.js";
 import { Clock } from "lucide-react";
 
-const Timer = ({ expiresAt, onExpire }) => {
+const Timer = ({ expiresAt, onExpire, minimal }) => {
   const getInitialSeconds = () => {
     const remainingMs = new Date(expiresAt) - Date.now();
     return Math.max(0, Math.floor(remainingMs / 1000));
@@ -53,6 +53,14 @@ const Timer = ({ expiresAt, onExpire }) => {
     isWarning && "[&>div]:bg-[var(--timer-warning)]",
     isDanger && "[&>div]:bg-[var(--timer-danger)]"
   );
+
+  if (minimal) {
+    return (
+      <span className={cn("font-mono font-bold tracking-wider", colorClass)}>
+        {displayTime}
+      </span>
+    );
+  }
 
   return (
     <div

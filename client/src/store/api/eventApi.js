@@ -41,6 +41,14 @@ export const eventApi = createApi({
       }),
       invalidatesTags: ["Seats"],
     }),
+    cancelReservation: builder.mutation({
+      query: ({ eventId }) => ({
+        url: "/api/reserve/cancel",
+        method: "POST",
+        body: { eventId },
+      }),
+      invalidatesTags: ["Seats"],
+    }),
     confirmBooking: builder.mutation({
       query: ({ reservationId }) => ({
         url: "/api/bookings",
@@ -71,6 +79,7 @@ export const {
   useGetEventByIdQuery,
   useReserveSeatsMutation,
   useConfirmBookingMutation,
+  useCancelReservationMutation,
   useUpdateProfileMutation,
   useGetMyBookingsQuery,
 } = eventApi;

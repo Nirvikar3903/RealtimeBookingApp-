@@ -63,7 +63,7 @@ const EventCard = ({ event }) => {
           <Button
             className="w-full bg-white/5 hover:bg-cyan-500 hover:text-slate-950 text-slate-200 border border-white/10 hover:border-cyan-400 hover:shadow-[0_0_15px_rgba(6,182,212,0.3)] transition-all duration-300 font-bold h-11 cursor-pointer flex items-center justify-center gap-2 group-hover:bg-cyan-500 group-hover:text-slate-950 group-hover:border-cyan-400"
           >
-            View Seats
+            Book Now
             <ArrowRight className="w-4 h-4 transition-transform group-hover:translate-x-1" />
           </Button>
         </div>

@@ -3,8 +3,8 @@ import { motion } from "framer-motion";
 import { cn } from "../lib/utils.js";
 import { useBooking } from "../hooks/useBooking.js";
 
-const SeatButton = ({ seat, disabled }) => {
-  const { selectedSeats, toggleSeat } = useBooking();
+const SeatButton = ({ seat, disabled, onReservedSeatClick }) => {
+  const { selectedSeats, toggleSeat, reservation } = useBooking();
   const { seatNumber, status } = seat;
 
   const isSelected = selectedSeats.includes(seatNumber);
@@ -12,7 +12,15 @@ const SeatButton = ({ seat, disabled }) => {
   const isReserved = status === "reserved";
   const isBooked = status === "booked";
 
+  const isMine = !!(isReserved && reservation && reservation.seatNumbers.includes(seatNumber));
+
   const handleClick = () => {
+    if (isMine) {
+      if (onReservedSeatClick) {
+        onReservedSeatClick(seatNumber);
+      }
+      return;
+    }
     if (!isAvailable || disabled) return;
     toggleSeat(seatNumber);
   };
@@ -24,7 +32,10 @@ const SeatButton = ({ seat, disabled }) => {
     // Available + Selected
     isAvailable && isSelected && "bg-cyan-500/20 border-2 border-cyan-400 shadow-[0_0_20px_rgba(6,182,212,0.6)] text-cyan-400 cursor-pointer font-bold",
     // Reserved
-    isReserved && "bg-amber-500/20 border-amber-400 shadow-[0_0_15px_rgba(245,158,11,0.5)] text-amber-400 animate-pulse cursor-not-allowed",
+    isReserved && cn(
+      "bg-amber-500/20 border-amber-400 shadow-[0_0_15px_rgba(245,158,11,0.5)] text-amber-400 animate-pulse",
+      isMine ? "cursor-pointer hover:border-amber-300" : "cursor-not-allowed"
+    ),
     // Booked
     isBooked && "bg-red-500/10 border-red-500 text-red-500 opacity-50 cursor-not-allowed"
   );
@@ -32,9 +43,9 @@ const SeatButton = ({ seat, disabled }) => {
   return (
     <motion.button
       type="button"
-      whileTap={isAvailable && !disabled ? { scale: 0.9 } : undefined}
+      whileTap={(isAvailable || isMine) && !disabled ? { scale: 0.9 } : undefined}
       transition={{ duration: 0.1 }}
-      disabled={!isAvailable || disabled}
+      disabled={isMine ? false : (!isAvailable || disabled)}
       onClick={handleClick}
       className={buttonClasses}
       title={`Seat ${seatNumber} - ${status}`}

@@ -2,7 +2,7 @@ import React from "react";
 import { useForm } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
 import * as z from "zod";
-import { useNavigate, Link } from "react-router-dom";
+import { useNavigate, Link, useLocation } from "react-router-dom";
 import useAuth from "../../hooks/useAuth.js";
 import { Button } from "../../components/ui/button.jsx";
 import { Card, CardContent, CardDescription, CardFooter, CardHeader, CardTitle } from "../../components/ui/card.jsx";
@@ -19,12 +19,15 @@ const loginSchema = z.object({
 const Login = () => {
   const { login, isLoggingIn, isAuthenticated } = useAuth();
   const navigate = useNavigate();
+  const location = useLocation();
+
+  const from = location.state?.from || "/events";
 
   React.useEffect(() => {
     if (isAuthenticated) {
-      navigate("/events", { replace: true });
+      navigate(from, { replace: true });
     }
-  }, [isAuthenticated, navigate]);
+  }, [isAuthenticated, navigate, from]);
 
   const {
     register,
@@ -42,7 +45,7 @@ const Login = () => {
     try {
       await login(data.email, data.password);
       toast.success("Welcome back!");
-      navigate("/events", { replace: true });
+      navigate(from, { replace: true });
     } catch (err) {
       console.error(err);
       toast.error(err.message || "Invalid email or password");

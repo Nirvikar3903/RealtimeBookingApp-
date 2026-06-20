@@ -2,7 +2,7 @@ import React from "react";
 import SeatButton from "./SeatButton.jsx";
 import { useBooking } from "../hooks/useBooking.js";
 
-const SeatGrid = ({ seats, disabled }) => {
+const SeatGrid = ({ seats, disabled, onReservedSeatClick }) => {
   const { selectedSeats } = useBooking();
 
   // Group seats by their row letter (e.g. 'A' from 'A1')
@@ -42,6 +42,7 @@ const SeatGrid = ({ seats, disabled }) => {
                   key={seat._id}
                   seat={seat}
                   disabled={disabled}
+                  onReservedSeatClick={onReservedSeatClick}
                 />
               ))}
             </div>
