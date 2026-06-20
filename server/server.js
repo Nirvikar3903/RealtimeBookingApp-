@@ -96,7 +96,7 @@ const seedDB = async () => {
       dateTime: new Date(Date.now() + 15 * 24 * 60 * 60 * 1000), // 15 days in future
       venue: "Pune Comedy Club",
       totalSeats: 10,
-      logoUrl: "https://images.unsplash.com/photo-1585699324551-f6c309eed262?q=80&w=300&auto=format&fit=crop",
+      logoUrl: "/comedy_special_logo.png",
     });
     await event3.save();
 
