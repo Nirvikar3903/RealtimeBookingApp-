@@ -71,6 +71,12 @@ export const eventApi = createApi({
       }),
       providesTags: ["Bookings"],
     }),
+    getBookingByReference: builder.query({
+      query: (reference) => ({
+        url: `/api/bookings/ticket/${reference}`,
+        method: "GET",
+      }),
+    }),
   }),
 });
 
@@ -82,5 +88,6 @@ export const {
   useCancelReservationMutation,
   useUpdateProfileMutation,
   useGetMyBookingsQuery,
+  useGetBookingByReferenceQuery,
 } = eventApi;
 

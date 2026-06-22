@@ -108,6 +108,7 @@ const EventDetail = () => {
         state: {
           seats: reservation.seatNumbers,
           eventName: data.event.name,
+          bookingReference: result.bookingReference,
         },
       });
       toast.success("Booking confirmed!");

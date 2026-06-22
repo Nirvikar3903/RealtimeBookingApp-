@@ -246,5 +246,26 @@ export const swaggerDocument = {
         },
       },
     },
+    "/api/bookings/ticket/{reference}": {
+      get: {
+        summary: "Get a ticket by its ID code",
+        tags: ["Bookings"],
+        security: [],
+        parameters: [
+          {
+            in: "path",
+            name: "reference",
+            required: true,
+            schema: { type: "string" },
+            description: "The unique booking reference string",
+          },
+        ],
+        responses: {
+          "200": { description: "Ticket details" },
+          "400": { description: "Booking reference is required" },
+          "404": { description: "Ticket not found" },
+        },
+      },
+    },
   },
 };

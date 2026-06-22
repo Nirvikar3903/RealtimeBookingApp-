@@ -63,8 +63,8 @@ const Bookings = () => {
                 const event = booking.eventId;
                 if (!event) return null;
 
-                // QR value format
-                const qrValue = `SortMyScene:${booking.bookingReference}|Event:${event.name}|Seats:${booking.seatNumbers.join(",")}`;
+                // QR value format (URL for scanning)
+                const qrValue = `${window.location.origin}/ticket/${booking.bookingReference}`;
 
                 return (
                   <div

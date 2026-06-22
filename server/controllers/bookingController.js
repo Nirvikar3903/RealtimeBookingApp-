@@ -103,3 +103,24 @@ export const getMyBookings = async (req, res, next) => {
     next(error);
   }
 };
+
+// Retrieve a booking by its public reference code
+export const getBookingByReference = async (req, res, next) => {
+  try {
+    const { reference } = req.params;
+    
+    if (!reference) {
+      return res.status(400).json({ message: "Booking reference is required" });
+    }
+
+    const booking = await Booking.findOne({ bookingReference: reference }).populate("eventId");
+    
+    if (!booking) {
+      return res.status(404).json({ message: "Ticket not found" });
+    }
+
+    return res.status(200).json(booking);
+  } catch (error) {
+    next(error);
+  }
+};

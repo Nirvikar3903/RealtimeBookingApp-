@@ -14,6 +14,7 @@ import Login from "./pages/auth/Login.jsx";
 import Register from "./pages/auth/Register.jsx";
 import Profile from "./pages/Profile.jsx";
 import Bookings from "./pages/Bookings.jsx";
+import TicketScan from "./pages/TicketScan.jsx";
 
 function AnimatedRoutes() {
   const location = useLocation();
@@ -24,6 +25,7 @@ function AnimatedRoutes() {
         <Route path="/events" element={<Events />} />
         <Route path="/auth/login" element={<Login />} />
         <Route path="/auth/register" element={<Register />} />
+        <Route path="/ticket/:reference" element={<TicketScan />} />
         
         {/* Redirection Fallbacks */}
         <Route path="/login" element={<Navigate to="/auth/login" replace />} />

@@ -13,18 +13,18 @@ const BookingSuccess = () => {
   const navigate = useNavigate();
   const ticketRef = useRef(null);
   
-  const { seats, eventName } = location.state || {};
+  const { seats, eventName, bookingReference } = location.state || {};
 
   // If no state (direct URL access), redirect to /events
-  if (!location.state || !seats || !eventName) {
+  if (!location.state || !seats || !eventName || !bookingReference) {
     return <Navigate to="/events" replace />;
   }
 
-  // Generate unique ticket reference code
-  const ticketRefCode = `SMS-${Math.random().toString(36).substring(2, 9).toUpperCase()}`;
+  // Use actual booking reference code
+  const ticketRefCode = bookingReference;
   
-  // Format QR Code value
-  const qrValue = `SortMyScene:${ticketRefCode}|Event:${eventName}|Seats:${seats.join(",")}`;
+  // Format QR Code value as a scannable URL
+  const qrValue = `${window.location.origin}/ticket/${ticketRefCode}`;
 
   // Handle print ticket stub
   const handlePrint = () => {
