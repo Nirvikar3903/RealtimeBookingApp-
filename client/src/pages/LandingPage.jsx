@@ -371,9 +371,22 @@ const EventsPreview = () => {
    FOOTER
    ═══════════════════════════════════════════ */
 const footerLinks = {
-  CUSTOMERS: ["Find your tickets", "Contact Us", "Apps"],
-  ORGANISERS: ["List Your Event", "Business App", "Scanner App"],
-  COMPANY: ["For Business", "Blog", "Privacy Policy", "Terms & Conditions"],
+  CUSTOMERS: [
+    { label: "Find your tickets", path: "/bookings" },
+    { label: "Contact Us", path: "mailto:nirvikar3903@gmail.com" },
+    { label: "Apps", path: "/" },
+  ],
+  ORGANISERS: [
+    { label: "List Your Event", path: "/business" },
+    { label: "Business App", path: "/" },
+    { label: "Scanner App", path: "/" },
+  ],
+  COMPANY: [
+    { label: "For Business", path: "/business" },
+    { label: "Blog", path: "/blog" },
+    { label: "Privacy Policy", path: "/privacy" },
+    { label: "Terms & Conditions", path: "/terms" },
+  ],
 };
 
 const Footer = () => (
@@ -397,10 +410,16 @@ const Footer = () => (
             <h4 className="text-slate-400 text-xs font-bold uppercase tracking-widest mb-4">{heading}</h4>
             <ul className="space-y-2.5">
               {links.map((link) => (
-                <li key={link}>
-                  <a href="#" className="text-slate-300 text-sm hover:text-purple-400 transition-colors">
-                    {link}
-                  </a>
+                <li key={link.label}>
+                  {link.path.startsWith("mailto:") ? (
+                    <a href={link.path} className="text-slate-300 text-sm hover:text-purple-400 transition-colors">
+                      {link.label}
+                    </a>
+                  ) : (
+                    <Link to={link.path} className="text-slate-300 text-sm hover:text-purple-400 transition-colors">
+                      {link.label}
+                    </Link>
+                  )}
                 </li>
               ))}
             </ul>

@@ -15,6 +15,10 @@ import Register from "./pages/auth/Register.jsx";
 import Profile from "./pages/Profile.jsx";
 import Bookings from "./pages/Bookings.jsx";
 import TicketScan from "./pages/TicketScan.jsx";
+import ForBusiness from "./pages/footer/ForBusiness.jsx";
+import Blog from "./pages/footer/Blog.jsx";
+import PrivacyPolicy from "./pages/footer/PrivacyPolicy.jsx";
+import TermsAndConditions from "./pages/footer/TermsAndConditions.jsx";
 
 function AnimatedRoutes() {
   const location = useLocation();
@@ -26,6 +30,12 @@ function AnimatedRoutes() {
         <Route path="/auth/login" element={<Login />} />
         <Route path="/auth/register" element={<Register />} />
         <Route path="/ticket/:reference" element={<TicketScan />} />
+        
+        {/* Static Pages */}
+        <Route path="/business" element={<ForBusiness />} />
+        <Route path="/blog" element={<Blog />} />
+        <Route path="/privacy" element={<PrivacyPolicy />} />
+        <Route path="/terms" element={<TermsAndConditions />} />
         
         {/* Redirection Fallbacks */}
         <Route path="/login" element={<Navigate to="/auth/login" replace />} />
