@@ -1,7 +1,7 @@
 import React from "react";
 import { Link, useNavigate } from "react-router-dom";
-import { motion } from "framer-motion";
-import { MapPin, ArrowRight, Star, ExternalLink, Globe } from "lucide-react";
+import { motion, useScroll, useTransform } from "framer-motion";
+import { MapPin, ArrowRight, Star, ExternalLink, Globe, Music, Ticket } from "lucide-react";
 import { useGetEventsQuery } from "../store/api/eventApi.js";
 import { Skeleton } from "../components/ui/skeleton.jsx";
 import dayjs from "dayjs";
@@ -28,16 +28,45 @@ const cardFadeUp = {
    ═══════════════════════════════════════════ */
 const HeroSection = () => {
   const navigate = useNavigate();
+  const { scrollY } = useScroll();
+  
+  // Parallax transforms for decorative elements
+  const y1 = useTransform(scrollY, [0, 1000], [0, 250]);
+  const y2 = useTransform(scrollY, [0, 1000], [0, -250]);
+  const y3 = useTransform(scrollY, [0, 1000], [0, 150]);
+  const rotate1 = useTransform(scrollY, [0, 1000], [0, 90]);
+  const rotate2 = useTransform(scrollY, [0, 1000], [0, -90]);
 
   const handleCTA = () => navigate("/events");
 
   return (
     <section className="relative min-h-[calc(100vh-64px)] flex items-center overflow-hidden">
-      {/* Background blobs */}
       <div className="absolute top-20 left-10 w-72 h-72 bg-purple-600/15 blur-3xl rounded-full pointer-events-none" />
       <div className="absolute bottom-20 right-10 w-64 h-64 bg-cyan-500/10 blur-3xl rounded-full pointer-events-none" />
 
-      <div className="max-w-7xl mx-auto px-6 lg:px-16 w-full py-16 lg:py-0">
+      {/* Parallax Decorative Elements */}
+      <motion.div 
+        style={{ y: y2, rotate: rotate1 }} 
+        className="absolute top-32 right-[20%] w-12 h-12 border border-purple-500/30 rounded-full pointer-events-none hidden lg:block"
+      />
+      <motion.div 
+        style={{ y: y1, rotate: rotate2 }} 
+        className="absolute bottom-40 left-[15%] w-8 h-8 bg-cyan-500/20 blur-md rounded-full pointer-events-none hidden lg:block"
+      />
+      <motion.div 
+        style={{ y: y3 }} 
+        className="absolute top-1/2 left-[5%] text-purple-500/30 pointer-events-none hidden lg:block"
+      >
+        <Star className="w-6 h-6" />
+      </motion.div>
+      <motion.div 
+        style={{ y: y2 }} 
+        className="absolute bottom-1/4 right-[5%] text-cyan-500/30 pointer-events-none hidden lg:block"
+      >
+        <div className="w-3 h-3 bg-cyan-400 rounded-full shadow-[0_0_15px_rgba(34,211,238,0.5)]" />
+      </motion.div>
+
+      <div className="max-w-7xl mx-auto px-6 lg:px-16 w-full py-16 lg:py-0 relative z-10">
         <div className="flex flex-col lg:flex-row items-center gap-12 lg:gap-20">
           {/* LEFT — text content */}
           <motion.div
@@ -99,47 +128,54 @@ const HeroSection = () => {
           </motion.div>
 
           {/* RIGHT — floating image collage */}
-          <div className="flex-1 flex justify-center relative">
+          <div className="flex-1 flex justify-center relative w-full lg:w-auto h-[400px] lg:h-auto items-center mt-10 lg:mt-0">
             {/* background glow */}
-            <div className="absolute w-96 h-96 bg-purple-500/20 blur-3xl rounded-full top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 pointer-events-none" />
+            <div className="absolute w-96 h-96 bg-gradient-to-tr from-purple-500/30 to-cyan-500/20 blur-[120px] rounded-full top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 pointer-events-none" />
 
             {/* large circle */}
             <motion.div
-              animate={{ y: [0, -20, 0] }}
-              transition={{ duration: 5, repeat: Infinity, ease: "easeInOut" }}
-              className="relative"
+              animate={{ y: [0, -15, 0], rotate: [0, 2, -2, 0] }}
+              transition={{ duration: 6, repeat: Infinity, ease: "easeInOut" }}
+              className="relative z-10"
             >
-              <div className="w-64 h-64 sm:w-72 sm:h-72 lg:w-[280px] lg:h-[280px] rounded-full border-2 border-purple-500/50 shadow-[0_0_60px_rgba(168,85,247,0.3)] overflow-hidden bg-gradient-to-br from-purple-900/80 to-cyan-900/60 flex items-center justify-center">
-                <div className="text-center p-6">
-                  <MapPin className="w-12 h-12 text-cyan-400 mx-auto mb-3" />
-                  <span className="text-2xl font-black bg-gradient-to-r from-purple-400 to-cyan-400 bg-clip-text text-transparent">
-                    SortMyScene
-                  </span>
-                  <p className="text-xs text-slate-400 mt-1">Live Events • Concerts • Festivals</p>
+              <div className="w-64 h-64 sm:w-80 sm:h-80 rounded-full p-[2px] bg-gradient-to-br from-purple-500/60 via-transparent to-cyan-500/60 shadow-[0_0_80px_rgba(168,85,247,0.25)]">
+                <div className="w-full h-full rounded-full bg-[#0a0f1c]/80 backdrop-blur-xl flex flex-col items-center justify-center relative overflow-hidden group border border-white/5">
+                  {/* Inner animated gradient */}
+                  <div className="absolute inset-0 bg-gradient-to-br from-purple-500/10 to-cyan-500/10 opacity-0 group-hover:opacity-100 transition-opacity duration-700" />
+                  
+                  <div className="text-center p-6 relative z-10">
+                    <div className="w-20 h-20 mx-auto mb-4 rounded-full bg-cyan-500/10 flex items-center justify-center shadow-[0_0_30px_rgba(34,211,238,0.2)]">
+                      <MapPin className="w-10 h-10 text-cyan-400" />
+                    </div>
+                    <span className="text-3xl font-black bg-gradient-to-r from-purple-400 to-cyan-400 bg-clip-text text-transparent tracking-tight">
+                      SortMyScene
+                    </span>
+                    <p className="text-sm text-slate-400 mt-2 font-medium">Live Events • Concerts • Festivals</p>
+                  </div>
                 </div>
               </div>
 
               {/* small circle 1 — top right */}
               <motion.div
-                animate={{ y: [0, -10, 0] }}
-                transition={{ duration: 3, repeat: Infinity, ease: "easeInOut", delay: 0.5 }}
-                className="absolute -top-2 -right-6 w-[110px] h-[110px] rounded-full border-2 border-purple-500/40 shadow-[0_0_30px_rgba(168,85,247,0.2)] overflow-hidden bg-gradient-to-br from-purple-800/70 to-purple-600/40 flex items-center justify-center"
+                animate={{ y: [0, -12, 0], x: [0, 8, 0] }}
+                transition={{ duration: 4, repeat: Infinity, ease: "easeInOut", delay: 0.5 }}
+                className="absolute -top-6 -right-8 sm:-right-12 w-28 h-28 rounded-full p-[1px] bg-gradient-to-tr from-purple-600/50 to-pink-500/50 shadow-[0_0_40px_rgba(168,85,247,0.3)] z-20"
               >
-                <div className="text-center">
-                  <span className="text-2xl">🎵</span>
-                  <p className="text-[10px] text-purple-300 font-semibold mt-1">Concerts</p>
+                <div className="w-full h-full rounded-full bg-[#130b24]/90 backdrop-blur-md flex flex-col items-center justify-center border border-white/10 hover:bg-purple-900/50 transition-colors duration-300 cursor-default">
+                  <Music className="w-8 h-8 text-pink-400 mb-1" />
+                  <p className="text-xs text-slate-300 font-bold tracking-wide">Concerts</p>
                 </div>
               </motion.div>
 
               {/* small circle 2 — bottom left */}
               <motion.div
-                animate={{ y: [0, -8, 0] }}
-                transition={{ duration: 4, repeat: Infinity, ease: "easeInOut", delay: 1 }}
-                className="absolute -bottom-4 -left-8 w-[90px] h-[90px] rounded-full border-2 border-cyan-500/40 shadow-[0_0_30px_rgba(6,182,212,0.2)] overflow-hidden bg-gradient-to-br from-cyan-800/70 to-cyan-600/40 flex items-center justify-center"
+                animate={{ y: [0, 10, 0], x: [0, -6, 0] }}
+                transition={{ duration: 5, repeat: Infinity, ease: "easeInOut", delay: 1 }}
+                className="absolute -bottom-4 -left-6 sm:-left-10 w-24 h-24 rounded-full p-[1px] bg-gradient-to-bl from-cyan-500/50 to-blue-500/50 shadow-[0_0_40px_rgba(6,182,212,0.3)] z-20"
               >
-                <div className="text-center">
-                  <span className="text-xl">🎭</span>
-                  <p className="text-[10px] text-cyan-300 font-semibold mt-1">Shows</p>
+                <div className="w-full h-full rounded-full bg-[#06141c]/90 backdrop-blur-md flex flex-col items-center justify-center border border-white/10 hover:bg-cyan-900/50 transition-colors duration-300 cursor-default">
+                  <Ticket className="w-7 h-7 text-cyan-400 mb-1" />
+                  <p className="text-[10px] text-slate-300 font-bold tracking-wide">Tickets</p>
                 </div>
               </motion.div>
             </motion.div>

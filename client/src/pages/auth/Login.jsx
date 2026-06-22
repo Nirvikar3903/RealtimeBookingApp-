@@ -7,7 +7,7 @@ import useAuth from "../../hooks/useAuth.js";
 import { Button } from "../../components/ui/button.jsx";
 import { Card, CardContent, CardDescription, CardFooter, CardHeader, CardTitle } from "../../components/ui/card.jsx";
 import { toast } from "sonner";
-import { Mail, Lock, LogIn } from "lucide-react";
+import { Mail, Lock, LogIn, Eye, EyeOff } from "lucide-react";
 import PageTransition from "../../components/PageTransition.jsx";
 
 // Form validation schema
@@ -20,6 +20,7 @@ const Login = () => {
   const { login, isLoggingIn, isAuthenticated } = useAuth();
   const navigate = useNavigate();
   const location = useLocation();
+  const [showPassword, setShowPassword] = React.useState(false);
 
   const from = location.state?.from || "/events";
 
@@ -97,11 +98,18 @@ const Login = () => {
                 <div className="relative">
                   <Lock className="absolute left-3.5 top-3.5 h-4 w-4 text-slate-500" />
                   <input
-                    type="password"
+                    type={showPassword ? "text" : "password"}
                     placeholder="••••••••"
                     {...register("password")}
-                    className="w-full bg-[#0f1422] border border-white/10 rounded-lg py-3 pl-10 pr-4 text-sm text-slate-100 placeholder-slate-500 focus:outline-none focus:ring-2 focus:ring-purple-500/50 focus:border-purple-500 transition-all"
+                    className="w-full bg-[#0f1422] border border-white/10 rounded-lg py-3 pl-10 pr-12 text-sm text-slate-100 placeholder-slate-500 focus:outline-none focus:ring-2 focus:ring-purple-500/50 focus:border-purple-500 transition-all"
                   />
+                  <button
+                    type="button"
+                    onClick={() => setShowPassword(!showPassword)}
+                    className="absolute right-3.5 top-3.5 text-slate-500 hover:text-slate-300 transition-colors"
+                  >
+                    {showPassword ? <EyeOff className="h-4 w-4" /> : <Eye className="h-4 w-4" />}
+                  </button>
                 </div>
                 {errors.password && (
                   <span className="text-xs text-red-400 font-medium">{errors.password.message}</span>
